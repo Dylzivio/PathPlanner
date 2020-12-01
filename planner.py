@@ -386,8 +386,21 @@ def start_to_finish(B, xs, ys, xf, yf):
         if obt_type == "island":
             go_along_wall(A, x_start, y_start, x_finish, y_finish, side)
             go_along_wall(A, x_start, y_start, x_finish, y_finish, side)
-
-        f = Node("F")
-        w_graph = Graph.create_from_nodes([a, b, c, d, e, f])
-        w_graph.connect(a, b, 5)
     return
+
+
+e = Node("E")
+f = Node("F")
+graph = Graph.create_from_nodes([a, b, c, d, e, f])
+graph.connect(a, b)
+graph.connect(a, c)
+w_graph = Graph.create_from_nodes([a, b, c, d, e, f])
+w_graph.connect(a, b, 5)
+w_graph.connect(a, c, 10)
+a = Node("A")
+b = Node("B")
+w_graph = Graph.create_from_nodes([a, b, c, d, e, f])
+w_graph.connect(a, b, 5)
+w_graph.connect(a, c, 10)
+# this is WITHOUT searchin, only construct graf
+

@@ -48,7 +48,7 @@ def contine_side(A, B, y, x, alfa, error):
 
 
 def expand_matrix(A):
-    B = create_zero(len(A) * 2, len(A[0]) * 2)
+    B = create_zero(len(A) * 2, len(A[0]) * 2)      #### changes from biomGenerator
     ######  nodes
     for y in range(len(A)):
         for x in range(len(A[y])):
