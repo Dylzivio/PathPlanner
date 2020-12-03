@@ -374,7 +374,7 @@ def type_of_obtacle(B_map, x_stop, y_stop):
     return obt_type, C_map
 
 
-def start_to_finish(B, xs, ys, xf, yf):
+def simple_detour_Fractal(B, xs, ys, xf, yf):
     xff, yff = -1, -1
     while xff != xf and yff != yf:
         xff, yff = end_of_line(B, xs, ys, xf, yf)
@@ -386,21 +386,48 @@ def start_to_finish(B, xs, ys, xf, yf):
         if obt_type == "island":
             go_along_wall(A, x_start, y_start, x_finish, y_finish, side)
             go_along_wall(A, x_start, y_start, x_finish, y_finish, side)
-    return
+    ###
+    ####
+    node_list = []
+    node_list.append(node1_x_y)
+    node_list.append(node2_x_y)
+    return node_list
 
 
-e = Node("E")
-f = Node("F")
-graph = Graph.create_from_nodes([a, b, c, d, e, f])
-graph.connect(a, b)
-graph.connect(a, c)
-w_graph = Graph.create_from_nodes([a, b, c, d, e, f])
-w_graph.connect(a, b, 5)
-w_graph.connect(a, c, 10)
-a = Node("A")
-b = Node("B")
-w_graph = Graph.create_from_nodes([a, b, c, d, e, f])
-w_graph.connect(a, b, 5)
-w_graph.connect(a, c, 10)
-# this is WITHOUT searchin, only construct graf
+def PATH_GLOBAL(start, finish):
+    list_of_weight = []
+    dep_tree = {}
+    not_used_yet = []
+    nodeName = nameForNode()
+    # dep_tree[nodeName] = node[start]
+    not_used_yet.append(nodeName) = nodeName
+
+    #block node creation and set dependence tree
+    while len(not_used_yet) != 0 :
+        loadNode = random.choise(not_used_yet)
+        node_info = {}
+        xs, ys = loadNode.get(loadNode)
+        node_info['coordinates'] = loadNode.get(loadNode)
+        node_request = simple_detour_Fractal(B, xs, ys, xf, yf)
+        for node in node_request:
+            nextNodeName = nameForNode()
+            not_used_yet.append(nextNodeName)
+            node_info[nextNodeName] = node
+        dep_tree[loadNode] = node_info
+
+
+    # block graf creation from dependence tree
+    for nameN in dep_tree.keys():
+        nameN = Node("F") #1 or 2 ##//.|\
+    w_graph = Graph.create_from_nodes([dep_tree.keys()])
+    graph.connect(a, b)
+
+    #   block of weight calculation and path correction
+    for node in nodes:
+    # def simplify the tree
+    for weight in list_of_weight:
+        w_graph.connect(a, b, 5)
+
+    #   block of calculate our way
+    print([(weight, [n.data for n in node]) for (weight, node) in w_graph.dijkstra(a)])
 
