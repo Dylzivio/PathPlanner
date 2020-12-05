@@ -1,5 +1,6 @@
 from megamap import A
 import math
+import random
 
 
 def create_zero_matrix(x, y):
@@ -104,6 +105,15 @@ def create_1st_S(MAP1):
                 if (0 <= stroka + 1 < y) and (0 <= number < x):  # down
                     MAP2[stroka + 1][number] = 1
     return MAP2
+
+
+def strait_safety(B, width):
+    B_1 = B
+    for n in range(width//2):
+        B_1 = create_1st_S(B)
+
+    B_2
+    return
 
 
 def find_center(B_map):
@@ -364,6 +374,18 @@ def is_obtacle_touch_frame(C_map, s=1):
     return 0
 
 
+def getName():
+    alfawit = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+               'V', 'W', 'X', 'Y', 'Z']
+    numbs = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+    my_name = random.choice(alfawit)
+    for i in range(2):
+        my_name += random.choice(alfawit)
+    for i in range(3):
+        my_name += random.choice(numbs)
+    return my_name
+
+
 def type_of_obtacle(B_map, x_stop, y_stop):
     obt_type = '0'
     C_map = create_filled_contour(x_stop, y_stop, B_map)  # add check outsides in contour
@@ -386,7 +408,8 @@ def simple_detour_Fractal(B, xs, ys, xf, yf):
         if obt_type == "island":
             go_along_wall(A, x_start, y_start, x_finish, y_finish, side)
             go_along_wall(A, x_start, y_start, x_finish, y_finish, side)
-    ###
+    ##
+    # раз в 3-4 действия записывать текуюю точку в список для его последующей фильтрации
     ####
     node_list = []
     node_list.append(node1_x_y)
@@ -395,38 +418,40 @@ def simple_detour_Fractal(B, xs, ys, xf, yf):
 
 
 def PATH_GLOBAL(start, finish):
-    list_of_weight = []
     dep_tree = {}
     not_used_yet = []
-    nodeName = nameForNode()
-    # dep_tree[nodeName] = node[start]
-    not_used_yet.append(nodeName) = nodeName
+    nodeName = getName()
+    not_used_yet.append(nodeName)
 
     #block node creation and set dependence tree
     while len(not_used_yet) != 0 :
-        loadNode = random.choise(not_used_yet)
+        loadNode = not_used_yet[0]
         node_info = {}
         xs, ys = loadNode.get(loadNode)
         node_info['coordinates'] = loadNode.get(loadNode)
         node_request = simple_detour_Fractal(B, xs, ys, xf, yf)
         for node in node_request:
-            nextNodeName = nameForNode()
+            nextNodeName = getName()
+            for checkNode in dep_tree.values():
+                if node == checkNode.get('coordinates'):
+                    continue
             not_used_yet.append(nextNodeName)
-            node_info[nextNodeName] = node
+            node_info[nextNodeName] = node[0], node[1]  # coordX and coordY
         dep_tree[loadNode] = node_info
+
+    #    dependence tree correction
 
 
     # block graf creation from dependence tree
-    for nameN in dep_tree.keys():
-        nameN = Node("F") #1 or 2 ##//.|\
+    for NodeName in dep_tree.keys():
+        NodeName = Node("F")     ###NAMEEEE add
     w_graph = Graph.create_from_nodes([dep_tree.keys()])
-    graph.connect(a, b)
+    for NodeName in dep_tree.keys():
+        for childNode in dep_tree.get(NodeName):
+            if childNode != 'coordinates':
+                weight = dep_tree.get(NodeName).get(childNode)  # [0 or 1}
+                graph.connect(NodeName, childNode, weight)
 
-    #   block of weight calculation and path correction
-    for node in nodes:
-    # def simplify the tree
-    for weight in list_of_weight:
-        w_graph.connect(a, b, 5)
 
     #   block of calculate our way
     print([(weight, [n.data for n in node]) for (weight, node) in w_graph.dijkstra(a)])
