@@ -108,11 +108,11 @@ def create_1st_S(MAP1):
 
 
 def strait_safety(B, width):
-    B_1 = B
-    for n in range(width//2):
-        B_1 = create_1st_S(B)
-
-    B_2
+    # B_1 = B
+    # for n in range(width//2):
+    #     B_1 = create_1st_S(B)
+    #
+    # B_2
     return
 
 
@@ -258,7 +258,7 @@ def turn_right(DIR, direction):
     return DIR
 
 
-def dist_cell(x_start, y_start, x_finish, y_finish):
+def distance(x_start, y_start, x_finish, y_finish):
     distance = math.sqrt((x_finish - x_start) * (x_finish - x_start) + (y_finish - y_start) * (y_finish - y_start))
     return distance
 
@@ -287,8 +287,9 @@ def dist_cell(x_start, y_start, x_finish, y_finish):
 
 
 def filter_start_pos(x_start, y_start, direction, direction_, B_map):
-    if B_map[x_start + direction.get('Up')[0]][y_start + direction.get('Up')[1]] and B_map[x_start + direction.get('Down')[0]][
-        y_start + direction.get('Down')[1]] and B_map[x_start + direction.get('Right')[0]][
+    if B_map[x_start + direction.get('Up')[0]][y_start + direction.get('Up')[1]] and \
+            B_map[x_start + direction.get('Down')[0]][
+                y_start + direction.get('Down')[1]] and B_map[x_start + direction.get('Right')[0]][
         y_start + direction.get('Right')[1]] and B_map[
         x_start + direction.get('Left')[0]][y_start + direction.get('Left')[1]]:
         for i in direction_.keys():
@@ -317,37 +318,101 @@ def go_along_wall(A, x_start, y_start, x_finish, y_finish, side):
     direction_ = {'ul': [-1, -1], 'ur': [-1, 1], 'dr': [1, 1], 'dl': [1, -1]}
     x, y = filter_start_pos(x, y, direction, direction_, A)
     DIR = direction.get('Left')
-    if side == 'Left':
-        while dist_cell(x_finish, y_finish, xff, yff) < 2:
+    path = 0
+    if side == 'LeftHand':
+        while distance(x_finish, y_finish, xff, yff) < 2:
+            if path >= 7 and Is_coincide(xff, yff, x_start, y_start):
+                raise Exception('return2start')
             if check_forward(x, y, DIR, A) == 1 and check_left(x, y, DIR, direction, A) == 1:
                 turn_right(DIR, direction)
             if check_left(x, y, DIR, direction, A) == 0:
                 if check_back_left(x, y, DIR, direction_, A) == 1:
                     turn_left(DIR, direction)
                     x, y = step_forward(x, y, DIR)
+                    path += 1
                     continue
                 turn_left(DIR, direction)
             if check_forward(x, y, DIR, A) == 0 and check_left(x, y, DIR, direction, A) == 1:
                 x, y = step_forward(x, y, DIR)
+                path += 1
             xff, yff = end_of_line(A, x, y, x_finish, y_finish)
         return x, y
-    if side == 'Right':
-        while dist_cell(x, y, xff, yff) < 2:
+    if side == 'RightHand':
+        while distance(x, y, xff, yff) < 2:
+            if path >= 7 and Is_coincide(xff, yff, x_start, y_start):
+                raise Exception('return2start')
             if check_forward(x, y, DIR, A) == 1 and check_right(x, y, DIR, direction, A) == 1:
                 turn_left(DIR, direction)
             if check_right(x, y, DIR, direction, A) == 0:
                 if check_back_right(x, y, DIR, direction_, A) == 1:
                     turn_right(DIR, direction)
                     x, y = step_forward(x, y, DIR)
+                    path += 1
                     continue
                 turn_right(DIR, direction)
             if check_forward(x, y, DIR, A) == 0 and check_right(x, y, DIR, direction, A) == 1:
                 x, y = step_forward(x, y, DIR)
+                path += 1
             xff, yff = end_of_line(A, x, y, x_finish, y_finish)
         return x, y
     # дописать остановку или масштабирование при конце фрагмента карты
-    # дописать заплатку обхода при наступлении на рамку  !!!!!!
-    # дописать заплатку упора в другой объект  !!!!!!
+    # дописать заплатку обхода при наступлении на рамку  !!!!!! done
+
+
+def go_along_wall_W(A, x_start, y_start, x_finish, y_finish, side):
+    x, y = x_start, y_start
+    xff, yff = x_start, y_start
+    direction = {'Up': [-1, 0], 'Down': [1, 0], 'Left': [0, -1], 'Right': [0, 1]}
+    direction_ = {'ul': [-1, -1], 'ur': [-1, 1], 'dr': [1, 1], 'dl': [1, -1]}
+    x, y = filter_start_pos(x, y, direction, direction_, A)
+    DIR = direction.get('Left')
+    path = 0
+    _path = 0
+    list_of_points = []
+    if side == 'LeftHand':
+        while distance(x_finish, y_finish, xff, yff) < 2:
+            if path >= 7 and Is_coincide(xff, yff, x_start, y_start):
+                raise Exception('return2start')
+            if check_forward(x, y, DIR, A) == 1 and check_left(x, y, DIR, direction, A) == 1:
+                turn_right(DIR, direction)
+            if check_left(x, y, DIR, direction, A) == 0:
+                if check_back_left(x, y, DIR, direction_, A) == 1:
+                    turn_left(DIR, direction)
+                    x, y = step_forward(x, y, DIR)
+                    path += 1
+                    continue
+                turn_left(DIR, direction)
+            if check_forward(x, y, DIR, A) == 0 and check_left(x, y, DIR, direction, A) == 1:
+                x, y = step_forward(x, y, DIR)
+                path += 1
+            xff, yff = end_of_line(A, x, y, x_finish, y_finish)
+            if _path <= path - 3:
+                list_of_points.append((x,y))
+                _path = path
+        return x, y, path, list_of_points
+    if side == 'RightHand':
+        while distance(x, y, xff, yff) < 2:
+            if path >= 7 and Is_coincide(xff, yff, x_start, y_start):
+                raise Exception('return2start')
+            if check_forward(x, y, DIR, A) == 1 and check_right(x, y, DIR, direction, A) == 1:
+                turn_left(DIR, direction)
+            if check_right(x, y, DIR, direction, A) == 0:
+                if check_back_right(x, y, DIR, direction_, A) == 1:
+                    turn_right(DIR, direction)
+                    x, y = step_forward(x, y, DIR)
+                    path += 1
+                    continue
+                turn_right(DIR, direction)
+            if check_forward(x, y, DIR, A) == 0 and check_right(x, y, DIR, direction, A) == 1:
+                x, y = step_forward(x, y, DIR)
+                path += 1
+            xff, yff = end_of_line(A, x, y, x_finish, y_finish)
+            if _path <= path - 3:
+                list_of_points.append((x,y))
+                _path = path
+        return path, list_of_points
+    # дописать остановку или масштабирование при конце фрагмента карты
+    # дописать заплатку обхода при наступлении на рамку  !!!!!! done
 
 
 def map_sliser_deep_bubble(A_map, deep, bubble):
@@ -374,7 +439,7 @@ def is_obtacle_touch_frame(C_map, s=1):
     return 0
 
 
-def getName():
+def generateName():
     alfawit = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
                'V', 'W', 'X', 'Y', 'Z']
     numbs = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
@@ -396,63 +461,117 @@ def type_of_obtacle(B_map, x_stop, y_stop):
     return obt_type, C_map
 
 
-def simple_detour_Fractal(B, xs, ys, xf, yf):
-    xff, yff = -1, -1
-    while xff != xf and yff != yf:
-        xff, yff = end_of_line(B, xs, ys, xf, yf)
-        obt_type, C_map = type_of_obtacle(B_map, x_stop, y_stop)
-        # B = create_1st_S(B)
+def Is_coincide(x_issue, y_issue, x_base, y_base):
+    if x_base - 1 <= x_issue <= x_base + 1:
+        if y_base - 1 <= y_issue <= y_base + 1:
+            return 1
+    return 0
+
+
+def Is_coincideOne(issue, base):
+    if base - 1 <= issue <= base + 1:
+            return 1
+    return 0
+
+
+def simple_detour_Fractal(B_map, x_start, y_start, x_finish, y_finish):
+    xf_fake, yf_fake = -1, -1
+    new_node_info = []
+    while not Is_coincideOne(xf_fake,x_finish) and not Is_coincideOne(yf_fake, y_finish):
+        xf_fake, yf_fake = end_of_line(B_map, x_start, y_start, x_finish, y_finish)
+        obt_type, C_map = type_of_obtacle(B_map, x_start, y_start)
         if obt_type == "coast":
-            go_along_wall(A, x_start, y_start, x_finish, y_finish, side)
-            go_along_wall(A, x_start, y_start, x_finish, y_finish, side)
+            try:
+                new_node_info.append(go_along_wall(A, x_start, y_start, x_finish, y_finish, "LeftHand"))
+            except:
+                new_node_info.append(go_along_wall(A, x_start, y_start, x_finish, y_finish, "RightHand"))
         if obt_type == "island":
-            go_along_wall(A, x_start, y_start, x_finish, y_finish, side)
-            go_along_wall(A, x_start, y_start, x_finish, y_finish, side)
-    ##
-    # раз в 3-4 действия записывать текуюю точку в список для его последующей фильтрации
-    ####
-    node_list = []
-    node_list.append(node1_x_y)
-    node_list.append(node2_x_y)
-    return node_list
+            new_node_info.append(go_along_wall(A, x_start, y_start, x_finish, y_finish, "LeftHand"))
+            new_node_info.append(go_along_wall(A, x_start, y_start, x_finish, y_finish, "RightHand"))
+    return new_node_info
 
 
-def PATH_GLOBAL(start, finish):
-    dep_tree = {}
-    not_used_yet = []
-    nodeName = getName()
-    not_used_yet.append(nodeName)
+def find_path_length(B_map, x_start, y_start, x_finish, y_finish):
+    list_of_points = []
+    way = 0
+    ex_way= []
+    obt_type, C_map = type_of_obtacle(B_map, x_start, y_start)
+    if obt_type == "coast":
+        try:
+            way, list_of_points = go_along_wall_W(C_map, x_start, y_start, x_finish, y_finish, "LeftHand")
+        except:
+            way, list_of_points = go_along_wall_W(C_map, x_start, y_start, x_finish, y_finish, "RightHand")
+    if obt_type == "island":
+        ex_way.append(go_along_wall_W(B_map, x_start, y_start, x_finish, y_finish, "LeftHand"))
+        ex_way.append(go_along_wall_W(B_map, x_start, y_start, x_finish, y_finish, "RightHand"))
+    if ex_way[0][0] > ex_way[1][0]:
+        way, list_of_points = ex_way[0][0], ex_way[1][0]
+    if ex_way[0][0] < ex_way[1][0]:
+        way, list_of_points = ex_way[1][0], ex_way[1][1]
+    return way, list_of_points
 
-    #block node creation and set dependence tree
-    while len(not_used_yet) != 0 :
+
+def path_list_smooth(B_map, list_of_points):
+    short_list_of_points = []
+    i = 0
+    for i in range(len(list_of_points)):
+        while e
+        for k in range(i,len(list_of_points)):
+
+
+    return short_list_of_points
+
+def PATH_GLOBAL(A_map, start, finish, deep, bubble):
+    B_map = map_sliser_deep_bubble(A_map, deep, bubble)
+    dep_tree = {}  # start node dict depend
+    not_used_yet = [start]
+    nodeName = generateName()
+
+    # block node creation and set dependence tree
+    while len(not_used_yet) != 0:
         loadNode = not_used_yet[0]
         node_info = {}
-        xs, ys = loadNode.get(loadNode)
-        node_info['coordinates'] = loadNode.get(loadNode)
-        node_request = simple_detour_Fractal(B, xs, ys, xf, yf)
+        x_start, y_start = loadNode[0], loadNode[1]
+        node_info['coordinates'] = loadNode
+        childName = 'child1'
+        node_request = simple_detour_Fractal(B_map, x_start, y_start, finish[0], finish[1])
         for node in node_request:
-            nextNodeName = getName()
-            for checkNode in dep_tree.values():
-                if node == checkNode.get('coordinates'):
+            nextNodeName = generateName()
+            for checkNode in dep_tree.keys():
+                if Is_coincide(node[0], node[1], dep_tree.get(checkNode).get('coordinates')[0],
+                               dep_tree.get(checkNode).get('coordinates')[1]):
+                    for parent_node in dep_tree.keys():
+                        if parent_node['child1'] == loadNode:
+                            dep_tree[parent_node['child1']] = (node[0], node[1])
+                        elif parent_node['child2'] == loadNode:
+                            dep_tree[parent_node['child2']] = (node[0], node[1])
                     continue
-            not_used_yet.append(nextNodeName)
-            node_info[nextNodeName] = node[0], node[1]  # coordX and coordY
-        dep_tree[loadNode] = node_info
+            not_used_yet.append(node)
+            node_info['coordinates'] = (node[0], node[1])  # coordX and coordY
+            node_info[childName] = node
+            dep_tree[nextNodeName] = node_info
+            childName = 'child2'
 
-    #    dependence tree correction
-
+    #  block  dependence tree correction and add weight
+    for parent_node in dep_tree.keys():
+        for childNode in dep_tree.get(parent_node).keys():
+            if childNode != 'coordinates':
+                pathLength, list_of_points = find_path_length(B_map,dep_tree.get(parent_node).get('coordinates')[0],
+                                              dep_tree.get(parent_node).get('coordinates')[0],
+                                              dep_tree.get(parent_node).get(childNode)[0],
+                                              dep_tree.get(parent_node).get(childNode)[1])
+                dep_tree[parent_node[childNode][2]] = pathLength
+                dep_tree[parent_node[childNode][3]] = list_of_points
 
     # block graf creation from dependence tree
     for NodeName in dep_tree.keys():
-        NodeName = Node("F")     ###NAMEEEE add
+        NodeName = Node("F")  # NAME add
     w_graph = Graph.create_from_nodes([dep_tree.keys()])
-    for NodeName in dep_tree.keys():
-        for childNode in dep_tree.get(NodeName):
+    for parent_node in dep_tree.keys():
+        for childNode in dep_tree.get(parent_node).keys():
             if childNode != 'coordinates':
-                weight = dep_tree.get(NodeName).get(childNode)  # [0 or 1}
-                graph.connect(NodeName, childNode, weight)
+                weight = dep_tree.get(parent_node).get(childNode)[2]  # 0-x 1-y 2-weight 3-list
+                graph.connect(parent_node, childNode, weight)
 
-
-    #   block of calculate our way
+                #   block of calculate our way by A*
     print([(weight, [n.data for n in node]) for (weight, node) in w_graph.dijkstra(a)])
-
