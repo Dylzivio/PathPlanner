@@ -4,21 +4,66 @@ from lineOps import line_Endpoint
 from mapOps import create_zero_matrix
 
 
-def SS_min_RR(x, y, SS, RR):
-      #unused function of bool matrix subtraction
-    TS = create_zero_matrix(x, y)
-    for stroka in range(len(SS)):
-        for number in range(len(SS[stroka])):
-            elemS = SS[stroka][number]
-            elemR = RR[stroka][number]
-            if elemS == 1:
-                if elemR == 1:
-                    TS[stroka][number] = 0
-                if elemR == 0:
-                    TS[stroka][number] = 1
-            if elemS == 0:
-                TS[stroka][number] = 0
-    return TS
+def create_around_layer_diag(MAP1):
+    # in create 1-tail layer aroudn bool "true" obtacle
+    width, height = len(MAP1[1]), len(MAP1)
+    MAP2 = create_zero_matrix(width, height)
+    for stroka in range(len(MAP1)):
+        for number in range(len(MAP1[stroka])):
+            if MAP1[stroka][number] == 1:
+                MAP2[stroka][number] = MAP1[stroka][number]
+                if (0 <= stroka < height) and (0 <= number + 1 < width):  # right
+                    MAP2[stroka][number + 1] = 1
+                if (0 <= stroka < height) and (0 <= number - 1 < width):  # left
+                    MAP2[stroka][number - 1] = 1
+                if (0 <= stroka - 1 < height) and (0 <= number < width):  # up
+                    MAP2[stroka - 1][number] = 1
+                if (0 <= stroka + 1 < height) and (0 <= number < width):  # down
+                    MAP2[stroka + 1][number] = 1
+                if (0 <= stroka - 1 < height) and (0 <= number + 1 < width):  # right-u
+                    MAP2[stroka - 1][number + 1] = 1  # r-u
+                if (0 <= stroka + 1 < height) and (0 <= number - 1 < width):  # r-d
+                    MAP2[stroka + 1][number - 1] = 1  # r-d
+                if (0 <= stroka - 1 < height) and (0 <= number - 1 < width):  # l-u
+                    MAP2[stroka - 1][number - 1] = 1  # l-u
+                if (0 <= stroka + 1 < height) and (0 <= number - 1 < width):  # down
+                    MAP2[stroka + 1][number - 1] = 1  # l-d
+    return MAP2
+
+
+def create_filled_contour(x_stop, y_stop, B_map):
+    # create around obtacle 1-cell border
+    x_edge, y_edge = len(B_map[1]), len(B_map)
+    OBT = create_zero_matrix(x_edge, y_edge)
+    OBT[y_stop][x_stop] = 1
+    nums = 1
+    k = nums - 1
+    while k != nums:
+        k = nums
+        for stroka in range(len(OBT)):
+            for number in range(len(OBT[stroka])):
+                if OBT[stroka][number] == 1:
+
+                    if (0 <= stroka < y_edge) and (0 <= number + 1 < x_edge):
+                        if B_map[stroka][number + 1] != 0 and OBT[stroka][number + 1] != 1:  # right
+                            OBT[stroka][number + 1] = 1
+                            nums += 1
+
+                    if (0 <= stroka < y_edge) and (0 <= number - 1 < x_edge):
+                        if B_map[stroka][number - 1] != 0 and OBT[stroka][number - 1] != 1:  # left
+                            OBT[stroka][number - 1] = 1
+                            nums += 1
+
+                    if (0 <= stroka - 1 < y_edge) and (0 <= number < x_edge):
+                        if B_map[stroka - 1][number] != 0 and OBT[stroka - 1][number] != 1:  # up
+                            OBT[stroka - 1][number] = 1
+                            nums += 1
+
+                    if (0 <= stroka + 1 < y_edge) and (0 <= number < x_edge):
+                        if B_map[stroka + 1][number] != 0 and OBT[stroka + 1][number] != 1:  # down
+                            OBT[stroka + 1][number] = 1
+                            nums += 1
+    return OBT
 
 
 def get_alfa(x_from, y_from, x_to, y_to):
