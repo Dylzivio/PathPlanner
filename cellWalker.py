@@ -101,12 +101,8 @@ def filter_start_pos(x_start, y_start, direction, direction_, B_map):
     if B_map[x_start + direction.get('Up')[0]][y_start + direction.get('Up')[1]] and \
             B_map[x_start + direction.get('Down')[0]][
                 y_start + direction.get('Down')[1]] and B_map[x_start + direction.get('Right')[0]][
-                y_start + direction.get('Right')[1]] and B_map[
-                x_start + direction.get('Left')[0]][y_start + direction.get('Left')[1]]:
-        # print(B_map[x_start + direction.get('Up')[0]][y_start + direction.get('Up')[1]])
-        # print(B_map[x_start + direction.get('Down')[0]][y_start + direction.get('Down')[1]])
-        # print(B_map[x_start + direction.get('Left')[0]][y_start + direction.get('Left')[1]])
-        # print(B_map[x_start + direction.get('Right')[0]][y_start + direction.get('Right')[1]])
+        y_start + direction.get('Right')[1]] and B_map[
+        x_start + direction.get('Left')[0]][y_start + direction.get('Left')[1]]:
         for i in direction_.keys():
             if B_map[y_start + direction_.get(i)[0]][y_start + direction_.get(i)[1]] == 0:
                 y_start = y_start + direction_.get(i)[0]
@@ -126,7 +122,7 @@ def filter_start_pos(x_start, y_start, direction, direction_, B_map):
 
 
 def go_along_wall(A, x_start, y_start, x_finish, y_finish, side):
-    print('                       ..')
+    print('////')
     for i in A:
         print(i)
     # go along the wall by 1-cell steps by L-F-hand rules
@@ -140,11 +136,14 @@ def go_along_wall(A, x_start, y_start, x_finish, y_finish, side):
     DIR = 'Right'
     path = 0
     if side == 'LeftHand':
+        print("LH: ")
         # standart Left-Hand-Algorithm
         while get_distance(x_finish, y_finish, xff, yff) >= 2:
             if path >= 10 and Is_coincide(xff, yff, x_start, y_start):
                 # if we chose cost-side and return to start position
-                raise Exception('return2start')
+                print('broken cycle')
+                # raise Exception('return2start')
+                return
             if check_forward(x, y, DIR, direction, A) == 1 and check_left(x, y, DIR, direction, A) == 1:
                 DIR = turn_right(DIR, direction)
             if check_left(x, y, DIR, direction, A) == 0:
@@ -154,22 +153,22 @@ def go_along_wall(A, x_start, y_start, x_finish, y_finish, side):
                     path += 1
                     continue
                 DIR = turn_left(DIR, direction)
-            if check_forward(x, y, DIR,direction, A) == 0 and check_left(x, y, DIR, direction, A) == 1:
+            if check_forward(x, y, DIR, direction, A) == 0 and check_left(x, y, DIR, direction, A) == 1:
                 x, y = step_forward(x, y, direction, DIR)
                 path += 1
-            print(A, x, y, x_finish, y_finish)
             xff, yff = line_Endpoint(A, x, y, x_finish, y_finish)
-            print('start: ',x_start, y_start)
-            print('finish: ',x_finish, y_finish)
-            print('fake: ',xff, yff)
-            print('dist: ', get_distance(x_finish, y_finish, xff, yff))
-            print('now: ',x,y )
-        return x, y
+            print(x,y, DIR)
+        return [x, y]
+
     if side == 'RightHand':
+        print("RH: ")
         # standart Right-Hand-Algorithm
         while get_distance(x_finish, y_finish, xff, yff) >= 2:
             if path >= 10 and Is_coincide(xff, yff, x_start, y_start):
-                raise Exception('return2start')
+                print('broken cycle')
+                return
+                # raise Exception('return2start')
+
             if check_forward(x, y, DIR, direction, A) == 1 and check_right(x, y, DIR, direction, A) == 1:
                 DIR = turn_left(DIR, direction)
             if check_right(x, y, DIR, direction, A) == 0:
@@ -182,10 +181,8 @@ def go_along_wall(A, x_start, y_start, x_finish, y_finish, side):
             if check_forward(x, y, DIR, direction, A) == 0 and check_right(x, y, DIR, direction, A) == 1:
                 x, y = step_forward(x, y, direction, DIR)
                 path += 1
-
-            print(A, x, y, x_finish, y_finish)
             xff, yff = line_Endpoint(A, x, y, x_finish, y_finish)
-        return x, y
+        return [x, y]
 
 
 def go_along_wall_W(A, x_start, y_start, x_finish, y_finish, side):
@@ -205,20 +202,20 @@ def go_along_wall_W(A, x_start, y_start, x_finish, y_finish, side):
                 # if we chose cost-side and return to start position
                 raise Exception('return2start')
             # standart Left-Hand-Algorithm
-            if check_forward(x, y, DIR, A) == 1 and check_left(x, y, DIR, direction, A) == 1:
-                turn_right(DIR, direction)
+            if check_forward(x, y, DIR, direction, A) == 1 and check_left(x, y, DIR, direction, A) == 1:
+                DIR = turn_right(DIR, direction)
             if check_left(x, y, DIR, direction, A) == 0:
                 if check_back_left(x, y, DIR, direction_, A) == 1:
-                    turn_left(DIR, direction)
-                    x, y = step_forward(x, y, DIR)
+                    DIR = turn_left(DIR, direction)
+                    x, y = step_forward(x, y, direction, DIR)
                     path += 1
                     continue
-                turn_left(DIR, direction)
-            if check_forward(x, y, DIR, A) == 0 and check_left(x, y, DIR, direction, A) == 1:
-                x, y = step_forward(x, y, DIR)
+                DIR = turn_left(DIR, direction)
+            if check_forward(x, y, DIR, direction, A) == 0 and check_left(x, y, DIR, direction, A) == 1:
+                x, y = step_forward(x, y, direction, DIR)
                 path += 1
             xff, yff = line_Endpoint(A, x, y, x_finish, y_finish)
-        # writing point of path ewery 3 steps and refresh  counter
+            # writing point of path ewery 3 steps and refresh  counter
             if _path <= path - 3:
                 list_of_points.append((x, y))
                 _path = path
@@ -228,20 +225,20 @@ def go_along_wall_W(A, x_start, y_start, x_finish, y_finish, side):
         while get_distance(x, y, xff, yff) < 2:
             if path >= 7 and Is_coincide(xff, yff, x_start, y_start):
                 raise Exception('return2start')
-            if check_forward(x, y, DIR, A) == 1 and check_right(x, y, DIR, direction, A) == 1:
-                turn_left(DIR, direction)
+            if check_forward(x, y, DIR, direction, A) == 1 and check_right(x, y, DIR, direction, A) == 1:
+                DIR = turn_left(DIR, direction)
             if check_right(x, y, DIR, direction, A) == 0:
                 if check_back_right(x, y, DIR, direction_, A) == 1:
-                    turn_right(DIR, direction)
-                    x, y = step_forward(x, y, DIR)
+                    DIR = turn_right(DIR, direction)
+                    x, y = step_forward(x, y, direction, DIR)
                     path += 1
                     continue
-                turn_right(DIR, direction)
-            if check_forward(x, y, DIR, A) == 0 and check_right(x, y, DIR, direction, A) == 1:
-                x, y = step_forward(x, y, DIR)
+                DIR = turn_right(DIR, direction)
+            if check_forward(x, y, DIR, direction, A) == 0 and check_right(x, y, DIR, direction, A) == 1:
+                x, y = step_forward(x, y, direction, DIR)
                 path += 1
             xff, yff = line_Endpoint(A, x, y, x_finish, y_finish)
-        # writing point of path ewery 3 steps and refresh  counter
+            # writing point of path ewery 3 steps and refresh  counter
             if _path <= path - 3:
                 list_of_points.append((x, y))
                 _path = path

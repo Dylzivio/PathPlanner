@@ -33,8 +33,8 @@ def PATH_GLOBAL(A_map, startPoint, finishPoint, deep, bubble):
     START_ = random.choise(dep_tree.keys)
     FINISH_ = random.choise(dep_tree.keys)
     # dep_tree.values()
-    print([(weight, [n.data for n in node]) for (weight, node) in path_planner_graph.dijkstra(START_ )])
+    # print([(weight, [n.data for n in node]) for (weight, node) in path_planner_graph.dijkstra(START_)])
 #     f'Nervous system: {str(self.nervous_system)}\n'
 
-
-print(PATH_GLOBAL(testmap, [3,3], [21,21], 1, 0))
+#
+# print(PATH_GLOBAL(testmap, [3,3], [21,21], 1, 0))

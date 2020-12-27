@@ -1,7 +1,9 @@
+from My_test_map import test2, test3
 from cellWalker import go_along_wall, filter_start_pos
 from lineOps import line_Endpoint
 from mapOps import create_zero_matrix, create_around_layer, map_sliser_deep_bubble, type_of_obtacle
 from mapOps import create_filled_contour
+from plannerOps import Create_Dependence_Tree, Add_Weight_2dependence
 
 testmap = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -37,16 +39,12 @@ testmap = [
 
 
 
-oo = map_sliser_deep_bubble(testmap,1,1)
-oo1 = create_filled_contour(7, 7, oo)
-x_start, y_start = line_Endpoint(oo, 6, 18, 21, 12)
-obt_type, C_map = type_of_obtacle(oo1, x_start, y_start)
+
+x_start, y_start = line_Endpoint(test2, 0, 0, 9, 10)
 direction = {'Up': [-1, 0], 'Down': [1, 0], 'Left': [0, -1], 'Right': [0, 1]}
 direction_ = {'ul': [-1, -1], 'ur': [-1, 1], 'dr': [1, 1], 'dl': [1, -1]}
-x_start, y_start = filter_start_pos(x_start, y_start, direction, direction_, C_map)
+x_start, y_start = filter_start_pos(x_start, y_start, direction, direction_, test3)
 print(x_start,y_start)
-VVV = go_along_wall(C_map, 6, 18, 21, 21, "LeftHand")
-print(obt_type)
-print(VVV)
-for i in C_map:
-    print(i)
+dep_tree = Create_Dependence_Tree(test3, [x_start, y_start], [10, 10])
+# dep_tree = Add_Weight_2dependence(test2, dep_tree)
+print(dep_tree)

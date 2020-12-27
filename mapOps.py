@@ -131,9 +131,12 @@ def create_filled_contour(x_stop, y_stop, B_map):
 
 
 def type_of_obtacle(B_map, x_stop, y_stop):
+    for i in B_map:
+        print(i)
+    print('/////')
     # return type of finding object- island or coast
     obt_type = '0'
-    print(x_stop, y_stop)
+
     C_map = create_filled_contour(x_stop, y_stop, B_map)  # add check outsides in contour
     for i in C_map:
         print(i)
@@ -141,7 +144,6 @@ def type_of_obtacle(B_map, x_stop, y_stop):
         obt_type = "coast"
         return obt_type
     obt_type = "island"
-
     return obt_type, C_map
 
 

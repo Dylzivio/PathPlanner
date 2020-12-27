@@ -19,10 +19,8 @@ def line_Endpoint(B_map, x_start, y_start, x_finish, y_finish, obtType=1):
     # obtType == 0 for "0" mask-obstacle on '1' map
     # return first point on line which touch the obtacle
     # for vertical line
-    print('line;  ', k, b)
     if abs(x_start - x_finish) < abs(y_finish - y_start):
         for y in range(y_start, y_finish):
-            # print(y_start, y_finish)
             x = (y - b) / k
             if B_map[y][math.trunc(x)] == obtType:
                 y_stop = y
@@ -32,11 +30,11 @@ def line_Endpoint(B_map, x_start, y_start, x_finish, y_finish, obtType=1):
     if abs(x_start - x_finish) >= abs(y_finish - y_start):
         for x in range(x_start, x_finish):
             y = k * x + b
-            elem = B_map[math.trunc(y)][x]
             if B_map[math.trunc(y)][x] == obtType:
                 y_stop = math.trunc(y)
                 x_stop = x
                 return x_stop, y_stop
+    return x_finish, y_finish
 
 
 def get_distance(x_start, y_start, x_finish, y_finish):
