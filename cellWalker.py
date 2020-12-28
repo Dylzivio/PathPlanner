@@ -96,25 +96,15 @@ def turn_right(DIR, direction):
         return DIR
 
 
-def filter_start_pos(x_start, y_start, direction, direction_, B_map):
+def filter_start_pos(x_start, y_start, direction, direction_, C_map):
     # return valid start position for L-R-Hand detour
-    if B_map[x_start + direction.get('Up')[0]][y_start + direction.get('Up')[1]] and \
-            B_map[x_start + direction.get('Down')[0]][
-                y_start + direction.get('Down')[1]] and B_map[x_start + direction.get('Right')[0]][
-        y_start + direction.get('Right')[1]] and B_map[
+    if C_map[x_start + direction.get('Up')[0]][y_start + direction.get('Up')[1]] and \
+            C_map[x_start + direction.get('Down')[0]][
+                y_start + direction.get('Down')[1]] and C_map[x_start + direction.get('Right')[0]][
+        y_start + direction.get('Right')[1]] and C_map[
         x_start + direction.get('Left')[0]][y_start + direction.get('Left')[1]]:
         for i in direction_.keys():
-            if B_map[y_start + direction_.get(i)[0]][y_start + direction_.get(i)[1]] == 0:
-                y_start = y_start + direction_.get(i)[0]
-                x_start = y_start + direction_.get(i)[1]
-                return x_start, y_start
-    if not B_map[x_start + direction.get('Up')[0]][y_start + direction.get('Up')[1]] and not \
-            B_map[x_start + direction.get('Down')[0]][
-                y_start + direction.get('Down')[1]] and not B_map[x_start + direction.get('Right')[0]][
-        y_start + direction.get('Right')[1]] and not B_map[
-        x_start + direction.get('Left')[0]][y_start + direction.get('Left')[1]]:
-        for i in direction_.keys():
-            if B_map[y_start + direction_.get(i)[0]][y_start + direction_.get(i)[1]] == 0:
+            if C_map[y_start + direction_.get(i)[0]][y_start + direction_.get(i)[1]] == 0:
                 y_start = y_start + direction_.get(i)[0]
                 x_start = y_start + direction_.get(i)[1]
                 return x_start, y_start
@@ -122,21 +112,20 @@ def filter_start_pos(x_start, y_start, direction, direction_, B_map):
 
 
 def go_along_wall(A, x_start, y_start, x_finish, y_finish, side):
-    print('////')
-    for i in A:
-        print(i)
     # go along the wall by 1-cell steps by L-F-hand rules
     x, y = x_start, y_start
+
     xff, yff = x_start, y_start
     direction = {'Up': [-1, 0], 'Down': [1, 0], 'Left': [0, -1], 'Right': [0, 1]}
     direction_ = {'ul': [-1, -1], 'ur': [-1, 1], 'dr': [1, 1], 'dl': [1, -1]}
     x, y = filter_start_pos(x, y, direction, direction_, A)
+
     # set start counter and dirrection meaning
     # DIR = direction.get('Left')
     DIR = 'Right'
     path = 0
+
     if side == 'LeftHand':
-        print("LH: ")
         # standart Left-Hand-Algorithm
         while get_distance(x_finish, y_finish, xff, yff) >= 2:
             if path >= 10 and Is_coincide(xff, yff, x_start, y_start):
@@ -157,11 +146,9 @@ def go_along_wall(A, x_start, y_start, x_finish, y_finish, side):
                 x, y = step_forward(x, y, direction, DIR)
                 path += 1
             xff, yff = line_Endpoint(A, x, y, x_finish, y_finish)
-            print(x,y, DIR)
         return [x, y]
 
     if side == 'RightHand':
-        print("RH: ")
         # standart Right-Hand-Algorithm
         while get_distance(x_finish, y_finish, xff, yff) >= 2:
             if path >= 10 and Is_coincide(xff, yff, x_start, y_start):

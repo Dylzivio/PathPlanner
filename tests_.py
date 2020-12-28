@@ -44,7 +44,7 @@ x_start, y_start = line_Endpoint(test2, 0, 0, 9, 10)
 direction = {'Up': [-1, 0], 'Down': [1, 0], 'Left': [0, -1], 'Right': [0, 1]}
 direction_ = {'ul': [-1, -1], 'ur': [-1, 1], 'dr': [1, 1], 'dl': [1, -1]}
 x_start, y_start = filter_start_pos(x_start, y_start, direction, direction_, test3)
-print(x_start,y_start)
-dep_tree = Create_Dependence_Tree(test3, [x_start, y_start], [10, 10])
-# dep_tree = Add_Weight_2dependence(test2, dep_tree)
+dep_tree = Create_Dependence_Tree(test3, [0,0], [10, 10])
 print(dep_tree)
+
+# dep_tree = Add_Weight_2dependence(test2, dep_tree)

@@ -1,4 +1,4 @@
-from My_test_map import testmap
+from My_test_map import testmap, test3
 
 
 def create_zero_matrix(width, heigth, element = 0):
@@ -118,7 +118,7 @@ def create_filled_contour(x_stop, y_stop, B_map):
     return OBT
 
 
-# def create_filled_contour(x_stop, y_stop, B_map):
+# def create_thin_contour(x_stop, y_stop, B_map):
 #     # create around obtacle 1-cell border
 #     x_edge, y_edge = len(B_map[1]), len(B_map)
 #     OBT = create_zero_matrix(x_edge, y_edge)
@@ -131,15 +131,9 @@ def create_filled_contour(x_stop, y_stop, B_map):
 
 
 def type_of_obtacle(B_map, x_stop, y_stop):
-    for i in B_map:
-        print(i)
-    print('/////')
     # return type of finding object- island or coast
     obt_type = '0'
-
     C_map = create_filled_contour(x_stop, y_stop, B_map)  # add check outsides in contour
-    for i in C_map:
-        print(i)
     if is_obtacle_touch_frame(C_map):
         obt_type = "coast"
         return obt_type

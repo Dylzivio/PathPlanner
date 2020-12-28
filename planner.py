@@ -1,4 +1,4 @@
-from My_test_map import testmap
+from My_test_map import testmap, test3
 
 from graf_only import Graph
 from graf_only import Node
@@ -26,15 +26,15 @@ def PATH_GLOBAL(A_map, startPoint, finishPoint, deep, bubble):
                 weight = dep_tree.get(parent_node).get(childNode)[2]  # 0-x 1-y 2-weight 3-list
                 path_planner_graph.connect(parent_node, childNode, weight)
     path_planner_graph.print_adj_mat()
+
     #   block of calculate our way by A*
-    #
+
+    #     f'Nervous system: {str(self.nervous_system)}\n'
 
     #   block of dejscterra
-    START_ = random.choise(dep_tree.keys)
-    FINISH_ = random.choise(dep_tree.keys)
-    # dep_tree.values()
-    # print([(weight, [n.data for n in node]) for (weight, node) in path_planner_graph.dijkstra(START_)])
-#     f'Nervous system: {str(self.nervous_system)}\n'
+    START_ = 'START'
+    FINISH_ = 'FINISH'
+    print([(weight, [n.data for n in node]) for (weight, node) in path_planner_graph.dijkstra(START_)])
 
 #
-# print(PATH_GLOBAL(testmap, [3,3], [21,21], 1, 0))
+print(PATH_GLOBAL(test3, [0,0], [11,11], 0, 0))
